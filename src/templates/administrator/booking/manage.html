@@ -1,0 +1,157 @@
+{% extends 'administrator/layouts/admin_layout.html' %}
+{% block content %}
+    <div class="container">
+        <div class="col-12">
+            <div class="row mt-4">
+                <div class="d-flex">
+                    <div class="">
+                        <h2>Booking Management</h2>
+                    </div>
+                    <div class="ms-auto p-2">
+                        <form onsubmit="" action="" method="GET">
+                            <div class="input-group mb-3">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">Vendors
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li class="dropdown-item">
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-text">
+                                                <input class="form-check-input mt-0" type="radio" name="vendor"
+                                                       value=""
+                                                       aria-label="Radio button for following text input">
+                                            </div>
+                                            <input type="text" class="form-control"
+                                                   aria-label="Text input with radio button"
+                                                   placeholder="" readonly>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <input type="hidden" name="sortBy" value="">
+
+                                <input type="text" class="form-control" name="title" aria-label="Search"
+                                       placeholder="Product's title" style="min-width: 20em;">
+                                <button type="submit" class="btn btn-outline-dark">Search</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <table class="table-design mb-2">
+                <thead>
+                <tr>
+                    <th style="width: 8em; max-width: 10em;">User Booking</th>
+                    <th style="width: 8em; max-width: 10em;">Booking's Date</th>
+                    <th style="width: 7em; max-width: 9em;">Booking's Time</th>
+                    <th style="width: 8em; max-width: 10em;">Booking's Doctor</th>
+                    <th style="width: 7em; min-width: 7em;">Booking's Notes</th>
+                    <th style="width: 9em; min-width: 8em;">Edit</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for booking in bookings %}
+                    <tr>
+                        <td>{{ booking.user_booking }}</td>
+                        <td>{{ booking.date }}</td>
+                        <td>{{ booking.time }}</td>
+                        <td>{{ booking.doctor }}</td>
+                        <td>{{ booking.note }}</td>
+                        <td>
+                            <button class="btn btn-outline-warning btn-sm" type="button" data-bs-toggle="modal"
+                                    data-bs-target="#edit-{{ booking._id }}">
+                                Edit
+                            </button>
+                        </td>
+                    </tr>
+                    <!-- Modal Update -->
+                    <div class="modal fade" id="edit-{{ booking._id }}" tabindex="-1" aria-labelledby="updateModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="updateModalLabel">Edit Booking</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <form method="POST" action="{{ url_for('admin.booking_edit_admin', _id=booking._id) }}">
+                                    {{ form.csrf_token() }}
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            {{ form.doctor.label(class="form-control-label") }}
+                                            {% if form.doctor.errors %}
+                                                {{ form.doctor(class="form-control is-invalid") }}
+                                                {% for error in form.doctor.errors %}
+                                                    <div class="invalid-feedback">
+                                                        <span>{{ error }}</span>
+                                                    </div>
+                                                {% endfor %}
+                                            {% else %}
+                                                {{ form.doctor(class="form-control", value=booking.doctor) }}
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="form-group">
+                                            {{ form.date.label(class="form-control-label") }}
+                                            {% if form.date.errors %}
+                                                {{ form.date(class="form-control is-invalid") }}
+                                                {% for error in form.date.errors %}
+                                                    <div class="invalid-feedback">
+                                                        <span>{{ error }}</span>
+                                                    </div>
+                                                {% endfor %}
+                                            {% else %}
+                                                {{ form.date(class="form-control", value=booking.date) }}
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="form-group">
+                                            {{ form.time.label(class="form-control-label") }}
+                                            {% if form.time.errors %}
+                                                {{ form.time(class="form-control is-invalid") }}
+                                                {% for error in form.time.errors %}
+                                                    <div class="invalid-feedback">
+                                                        <span>{{ error }}</span>
+                                                    </div>
+                                                {% endfor %}
+                                            {% else %}
+                                                {{ form.time(class="form-control", value=booking.time) }}
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="form-group">
+                                            {{ form.note.label(class="form-control-label") }}
+                                            {% if form.note.errors %}
+                                                {{ form.note(class="form-control is-invalid") }}
+                                                {% for error in form.note.errors %}
+                                                    <div class="invalid-feedback">
+                                                        <span>{{ error }}</span>
+                                                    </div>
+                                                {% endfor %}
+                                            {% else %}
+                                                {{ form.note(class="form-control", value=booking.note) }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close
+                                        </button>
+                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="d-flex">
+                <div class="justify-content-center input-group">
+                    <a class="btn btn-outline-dark" onclick="showLoadingSpinner();"
+                       href="">Prev</a>
+                    <a class="btn btn-outline-dark" onclick="showLoadingSpinner();"
+                       href="">Next</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

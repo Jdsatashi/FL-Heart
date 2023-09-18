@@ -5,3 +5,4 @@ venv
 test2.py
 test.py
 __pycache__/
+__pycache__

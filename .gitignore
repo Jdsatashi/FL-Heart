@@ -33,3 +33,5 @@ env2/
 env3/
 instance/
 .vercel
+test.py
+test2.py

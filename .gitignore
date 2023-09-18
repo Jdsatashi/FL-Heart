@@ -1,8 +1,35 @@
-.idea
-.vscode
-env
-venv
-test2.py
-test.py
+# Byte-compiled / optimized / DLL files
 __pycache__/
-__pycache__
+*.py[cod]
+*$py.class
+
+# Local development settings
+*.env
+*.sqlite3
+.env
+.idea/
+.vscode/
+# Logs
+log/
+*.log
+
+# Media files
+media/
+
+# Static files
+staticfiles/
+
+# Backup files
+*.backup
+*.bak
+*.swp
+*.~*
+
+# Dependency directories
+venv/
+env/
+env1/
+env2/
+env3/
+instance/
+.vercel

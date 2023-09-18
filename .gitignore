@@ -4,3 +4,4 @@ env
 venv
 test2.py
 test.py
+__pycache__/

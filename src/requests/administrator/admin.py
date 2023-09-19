@@ -1,5 +1,7 @@
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify
-from _datetime import datetime
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify, flash
+from _datetime import datetime, timedelta
+
+from src.api.bookings import validate_date_time
 from src.forms import BookingForm
 from src.mongodb import BOOKING_TABLE
 from bson import ObjectId
@@ -47,6 +49,8 @@ def booking_edit_admin(_id):
         notes = form.note.data
         _id = _id
 
+        validate_date_time(form.date.data, form.time.data)
+
         edit_booking = BOOKING_TABLE.find_one_and_update(
             {'_id': ObjectId(_id)},
             {
@@ -62,4 +66,4 @@ def booking_edit_admin(_id):
         if edit_booking:
             return redirect((url_for('admin.booking_index_admin')))
     else:
-        return redirect((url_for('admin.booking_index_admin')))
+        return redirect((url_for('admin.booking_index_admin', form=form)))

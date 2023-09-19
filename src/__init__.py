@@ -1,5 +1,4 @@
 from flask import Flask
-from flask_bcrypt import Bcrypt
 from flask import render_template
 from flask_mail import Mail, Message
 from .constant.config import *
@@ -19,8 +18,6 @@ app.config.from_mapping(
 
 
 from src import mongodb
-
-bcrypt = Bcrypt(app)
 
 mail = Mail(app)
 

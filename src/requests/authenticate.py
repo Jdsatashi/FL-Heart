@@ -1,10 +1,12 @@
 from _datetime import datetime
+
+import bcrypt
 import validators
 from bson import ObjectId
 from flask import render_template, redirect, request, flash, url_for, Blueprint, session, jsonify
-from src.mongodb import ACCOUNT_TABLE
-import bcrypt
+
 from src.forms import RegisterForm, LoginForm
+from src.mongodb import ACCOUNT_TABLE
 from .role import role_table
 from ..constant.http_status import HTTP_401_UNAUTHORIZED
 
@@ -90,13 +92,17 @@ def logout():
 
 def authorize_user():
     if 'username' in session:
+        print('This session ok!')
         account_data = ACCOUNT_TABLE.find_one({'username': session['username']})
         account_data['_id'] = str(account_data['_id'])
         data = account_data
         if 'password' in data:
             data.pop('password')
         return data
-    elif request.authorization["username"] is not None and request.authorization["password"] is not None:
+    elif (request.authorization is not None
+            and "username" in request.authorization
+            and "password" in request.authorization):
+        print('This request.authorization ok!')
         username = request.authorization["username"]
         password = request.authorization["password"]
         password_hash = password.encode('utf8')
@@ -109,9 +115,8 @@ def authorize_user():
             if 'password' in data:
                 data.pop('password')
         else:
-            return jsonify({
-                'message': 'Wrong password'
-            }), HTTP_401_UNAUTHORIZED
+            return False
         return data
     else:
-        return jsonify({'message': 'Unauthorized'}), HTTP_401_UNAUTHORIZED
+        print('Else case: Unauthorized!')
+        return False

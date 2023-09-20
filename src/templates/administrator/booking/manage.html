@@ -34,30 +34,36 @@
                 </div>
             </div>
             <div class="row d-flex mb-2">
-                <div class="justify-content-center input-group">
-                    <a class="btn btn-outline-dark" style="width: 64px" onclick="showLoadingSpinner();"
-                       href="{{ url_for('admin.booking_index_admin', current=paginating.prev_page) }}">Prev</a>
-                    <a class="btn btn-outline-dark" style="width: 64px" onclick="showLoadingSpinner();"
-                       href="{{ url_for('admin.booking_index_admin', current=paginating.next_page) }}">Next</a>
-                </div>
+                {% if not paginating == False %}
+                    <div class="justify-content-center input-group">
+                        {% if paginating.prev_page %}
+                            <a class="btn btn-outline-dark" style="width: 64px" onclick="showLoadingSpinner();"
+                               href="{{ url_for('admin.booking_index_admin', current=paginating.prev_page) }}">Prev</a>
+                        {% endif %}
+                        {% if paginating.next_page %}
+                            <a class="btn btn-outline-dark" style="width: 64px" onclick="showLoadingSpinner();"
+                               href="{{ url_for('admin.booking_index_admin', current=paginating.next_page) }}">Next</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
             </div>
             <table class="table-design mb-2">
                 <thead>
                 <tr>
-                    <th style="width: 8em; max-width: 10em;">User Booking</th>
-                    <th style="width: 8em; max-width: 10em;">Booking's Date</th>
                     <th style="width: 7em; max-width: 9em;">Booking's Time</th>
+                    <th style="width: 8em; max-width: 10em;">Booking's Date</th>
+                    <th style="width: 8em; max-width: 10em;">User Booking</th>
                     <th style="width: 8em; max-width: 10em;">Booking's Doctor</th>
                     <th style="width: 7em; min-width: 7em;">Booking's Notes</th>
-                    <th style="width: 6em; min-width: 8em;">Edit</th>
+                    <th style="width: 4em; min-width: 6em;">Edit</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for booking in bookings %}
                     <tr>
-                        <td>{{ booking.user_booking }}</td>
-                        <td>{{ booking.date }}</td>
                         <td>{{ booking.time }}</td>
+                        <td>{{ booking.date }}</td>
+                        <td>{{ booking.user_booking }}</td>
                         <td>{{ booking.doctor }}</td>
                         <td>{{ booking.note }}</td>
                         <td>

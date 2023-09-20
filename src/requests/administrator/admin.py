@@ -1,12 +1,12 @@
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify, flash
-from _datetime import datetime, timedelta
+from _datetime import datetime
+
+import pymongo
+from bson import ObjectId
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 
 from src.api.bookings import complex_validate_datetime
-from src.constant.http_status import HTTP_401_UNAUTHORIZED
 from src.forms import BookingForm
 from src.mongodb import BOOKING_TABLE
-from bson import ObjectId
-
 from src.requests.authenticate import admin_authorize
 
 admin_routes = Blueprint('admin', __name__)
@@ -59,7 +59,8 @@ def booking_index_admin():
     # Pagination follow by date
     filter_date = date_active[0] if date_active else date_unique[-1]
     filter_date = date_unique[int(current_page)] if current_page else filter_date
-    data_booking2 = BOOKING_TABLE.find({'date': filter_date}) if filter_date else BOOKING_TABLE.find()
+    data_booking2 = BOOKING_TABLE.find({'date': filter_date}).sort([("date", pymongo.ASCENDING), ("time", pymongo.ASCENDING)])\
+        if filter_date else BOOKING_TABLE.find().sort([("date", pymongo.ASCENDING), ("time", pymongo.ASCENDING)])
     current_index = current_page if current_page is not None else date_unique.index(date_active[0])
     current_index = int(current_index)
     next_page = current_index + 1 if (current_index + 1) < len(date_unique) else None
@@ -71,18 +72,29 @@ def booking_index_admin():
     }
 
     if request.method == 'GET':
-        if datebook is not None:
-            try:
-                data_booking2 = BOOKING_TABLE.find({'date': datebook})
-            except TypeError:
-                data_booking2 = BOOKING_TABLE.find({'date': str(datebook)})
-        if type_search and query_search is not None:
-            data_booking2 = BOOKING_TABLE.find({type_search: {"$regex": query_search, "$options": "i"}})
+        if datebook and type_search and query_search:
+            print("if 1")
+            data_booking2 = BOOKING_TABLE.find({
+                '$and': [
+                    {'date': datebook},
+                    {type_search: {"$regex": query_search, "$options": "i"}}
+                ]
+            }).sort([("date", pymongo.ASCENDING), ("time", pymongo.ASCENDING)])
+        elif datebook:
+            print("if 2")
+            data_booking2 = BOOKING_TABLE.find({'date': datebook}).sort([("date", pymongo.ASCENDING), ("time", pymongo.ASCENDING)])
+        elif type_search and query_search:
+            print("if 3")
+            data_booking2 = BOOKING_TABLE.find({
+                type_search: {"$regex": query_search, "$options": "i"}
+            }).sort([("date", pymongo.ASCENDING), ("time", pymongo.ASCENDING)])
         for booking in data_booking2:
             booking['_id'] = str(booking['_id'])
             data.append(booking)
         if len(data) == 0:
             flash(f"Not found.", "warning")
+        print('page_paginate has value is:')
+        print(page_paginate)
         return render_template(
             'administrator/booking/manage.html',
             title='Booking Management',

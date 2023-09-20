@@ -16,12 +16,9 @@ admin = admin_routes
 @admin.route('/')
 def index_admin():
     authorize = admin_authorize()
-    print("Authorize has value is: " + authorize)
     if not authorize:
-        print('This is: "admin unauthorized"')
         flash(f"Unauthorized.", "danger")
         return redirect(url_for('home'))
-    print('Admin authorized acceptable!')
     return render_template('administrator/admin.html', title='Admin Dashboard')
 
 
@@ -29,7 +26,6 @@ def index_admin():
 def booking_index_admin():
     authorize = admin_authorize()
     if not authorize:
-        print('This is: "admin unauthorized"')
         flash(f"Unauthorized.", "danger")
         return redirect(url_for('home'))
 
@@ -37,8 +33,6 @@ def booking_index_admin():
     type_search = request.args.get('type_search')
     query_search = request.args.get('query_search')
     current_page = request.args.get('current')
-    print('Current page = ')
-    print(current_page)
     data_booking_date = BOOKING_TABLE.distinct('date')
     form = BookingForm()
     data = []
@@ -73,7 +67,6 @@ def booking_index_admin():
 
     if request.method == 'GET':
         if datebook and type_search and query_search:
-            print("if 1")
             data_booking2 = BOOKING_TABLE.find({
                 '$and': [
                     {'date': datebook},
@@ -81,10 +74,8 @@ def booking_index_admin():
                 ]
             }).sort([("date", pymongo.ASCENDING), ("time", pymongo.ASCENDING)])
         elif datebook:
-            print("if 2")
             data_booking2 = BOOKING_TABLE.find({'date': datebook}).sort([("date", pymongo.ASCENDING), ("time", pymongo.ASCENDING)])
         elif type_search and query_search:
-            print("if 3")
             data_booking2 = BOOKING_TABLE.find({
                 type_search: {"$regex": query_search, "$options": "i"}
             }).sort([("date", pymongo.ASCENDING), ("time", pymongo.ASCENDING)])
@@ -93,8 +84,6 @@ def booking_index_admin():
             data.append(booking)
         if len(data) == 0:
             flash(f"Not found.", "warning")
-        print('page_paginate has value is:')
-        print(page_paginate)
         return render_template(
             'administrator/booking/manage.html',
             title='Booking Management',

@@ -46,7 +46,6 @@ def create_booking():
         return jsonify({'message': 'Unauthorized'}), HTTP_401_UNAUTHORIZED
 
     if request.method == 'POST':
-        user_data = authorize_user()
         email = user_data['email']
         doctor = request.get_json().get('doctor')
         date_booking = request.get_json().get('date')
@@ -151,7 +150,6 @@ def update_booking(_id):
         booking_conflict = BOOKING_TABLE.find({'doctor': doctor, 'date': date_formatted, 'time': time_formatted})
         if booking_conflict:
             try:
-                print(len(booking_conflict))
                 for booking_data in booking_conflict:
                     booking_data['_id'] = str(booking_data['_id'])
                     if data_booking['_id'] == booking_conflict['_id']:
@@ -205,7 +203,6 @@ def delete_booking(_id):
 
 
 def complex_validate_datetime(date_obj, time_obj, is_json: bool):
-    print("Run this complex_validate_datetime")
     today = datetime.now().strptime(datetime.now().strftime('%d/%m/%Y'), '%d/%m/%Y')
     date_obj_validate = datetime.strptime(date_obj.strftime('%d/%m/%Y'), '%d/%m/%Y')
     time_obj_validate = datetime.strptime(time_obj.strftime('%H:%M'), '%H:%M').time() if not is_json \
@@ -213,14 +210,12 @@ def complex_validate_datetime(date_obj, time_obj, is_json: bool):
     current_time = datetime.now().time()
     if date_obj_validate < today:
         if is_json:
-            print("Run this:  'date_obj_validate < today'")
             return {'message': 'Cannot chose past date.'}
         flash(f"Cannot booking past date.", "warning")
         return False
     # T2 = 0, T3 = 1, T4 = 2, T5 = 3, T6 = 4, T7 = 5
     elif date_obj_validate.weekday() not in range(0, 5):
         if is_json:
-            print("Run this:  'date_obj_validate.weekday() not in range(0, 5)'")
             return {'message': 'Cannot booking at Saturday and Sunday.'}
         flash(f"Cannot booking at Saturday and Sunday.", "warning")
         return False
@@ -230,7 +225,6 @@ def complex_validate_datetime(date_obj, time_obj, is_json: bool):
         two_hours_from_now = (datetime.combine(datetime.today(), current_time) + two_hours_delta).time()
         if time_obj_validate < two_hours_from_now:
             if is_json:
-                print("Run this:  'time_obj_validate < two_hours_from_now'")
                 return {'message': 'You have to booking at least 2 hours from now.'}
             flash(f"You have to booking at least 2 hours from now.", "warning")
             return False
@@ -240,13 +234,11 @@ def complex_validate_datetime(date_obj, time_obj, is_json: bool):
         else datetime.strptime('12:00:00', '%H:%M:%S').time()
     if time_obj_validate == breaking_hours:
         if is_json:
-            print("Run this:  'time_obj_validate == breaking_hours'")
             return {'message': 'Booking at 12:00 is not allowed.'}
         flash(f"You cannot break time 12:00.", "warning")
         return False
     elif time_obj_validate < business_hours_start or time_obj_validate > business_hours_end:
         if is_json:
-            print("Run this:  'time_obj_validate < business_hours_start or time_obj_validate > business_hours_end'")
             return {'message': 'Booking is only allowed business hours (08:00 to 16:00).'}
         flash(f"Booking is only allowed business hours (08:00 to 16:00).", "warning")
         return False

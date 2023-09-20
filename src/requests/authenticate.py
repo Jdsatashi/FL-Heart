@@ -123,18 +123,14 @@ def authorize_user():
 
 
 def admin_authorize():
-    print('Test function authorize admin')
     user_data = authorize_user()
     if not user_data:
-        print('test "user_data"')
         return False
     user_data['_id'] = str(user_data['_id'])
     user = user_data
     if 'password' in user:
-        print('test user "password"')
         user.pop('password')
     is_role_admin = user['role_id']
-    print('test role here: ')
     if not is_role_admin == role_admin_id:
         print(f"Test role false: \nUser role: {is_role_admin}\nAdmin role: {role_admin_id}")
         return False

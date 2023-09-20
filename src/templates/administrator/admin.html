@@ -1,116 +1,26 @@
 {% extends 'administrator/layouts/admin_layout.html' %}
 {% block content %}
     <div class="container">
-        <div class="col-12">
-            <div class="row mt-4">
-                <div class="d-flex">
-                    <div class="">
-                        <h2>Booking Management</h2>
-                    </div>
-                    <div class="ms-auto p-2">
-                        <form onsubmit="" action="" method="GET">
-                            <div class="input-group mb-3">
-                                <button class="btn btn-outline-secondary dropdown-toggle" type="button"
-                                        data-bs-toggle="dropdown" aria-expanded="false">Vendors
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li class="dropdown-item">
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-text">
-                                                <input class="form-check-input mt-0" type="radio" name="vendor"
-                                                       value=""
-                                                       aria-label="Radio button for following text input">
-                                            </div>
-                                            <input type="text" class="form-control"
-                                                   aria-label="Text input with radio button"
-                                                   placeholder="" readonly>
-                                        </div>
-                                    </li>
-                                </ul>
-                                <input type="hidden" name="sortBy" value="">
-
-                                <input type="text" class="form-control" name="title" aria-label="Search"
-                                       placeholder="Product's title" style="min-width: 20em;">
-                                <button type="submit" class="btn btn-outline-dark">Search</button>
-                            </div>
-                        </form>
-                    </div>
+        <div class="row">
+            <div class="col-md-12 col-md-offset-1">
+                <div class="d-flex justify-content-center">
+                    <h2>Admin dashboard</h2>
                 </div>
-            </div>
-            <table class="table-design mb-2">
-                <thead>
-                <tr>
-                    <th>
-                        <div class="form-check">
-                            <label for="selectAll"></label><input class="form-check-input" type="checkbox"
-                                                                  id="selectAll">
-                        </div>
-                    </th>
-                    <th style="width: 8em; max-width: 9em;">ID</th>
-                    <th style="width: 4em; max-width: 6em;">Image</th>
-                    <th>Title</th>
-                    <th>Vendor</th>
-                    <th style="width: 7em; min-width: 7em;">Price</th>
-                    <th style="width: 9em; min-width: 8em;">Discount</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>
-                        <div class="form-check">
-                            <label>
-                                <input class="form-check-input product-checkbox"
-                                       name="" value=""
-                                       type="checkbox" data-product-id=""
-                                       id="productCheckbox_">
-                            </label>
-                        </div>
-                    </td>
-                    <td>id</td>
-                    <td>
-                        5
-                    </td>
-                    <td>6</td>
-                    <td>7</td>
-                    <td>
-                        8
-                    </td>
-                    <td>
-                        9
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="form-check">
-                            <label>
-                                <input class="form-check-input product-checkbox"
-                                       name="" value=""
-                                       type="checkbox" data-product-id=""
-                                       id="productCheckbox_">
-                            </label>
-                        </div>
-                    </td>
-                    <td>id</td>
-                    <td>
-                        5
-                    </td>
-                    <td>6</td>
-                    <td>7</td>
-                    <td>
-                        8
-                    </td>
-                    <td>
-                        9
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <div class="d-flex">
-                <div class="justify-content-center input-group">
-                    <a class="btn btn-outline-dark" onclick="showLoadingSpinner();"
-                       href="">Prev</a>
-                    <a class="btn btn-outline-dark" onclick="showLoadingSpinner();"
-                       href="">Next</a>
+                <div>
+                    <table class="table" width="50%">
+                        <thead>
+                        <tr>
+                            <th scope="col">Page</th>
+                            <th scope="col">Link</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Booking management</td>
+                            <td><a href="{{ url_for('admin.booking_index_admin') }}" class="btn btn-dark btn-sm">Booking</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

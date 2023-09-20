@@ -2,7 +2,7 @@ from flask import redirect, request, Blueprint, session, jsonify
 from bson import ObjectId
 from _datetime import datetime
 from src import mongodb
-from ..constant.http_status import *
+from ..constant.http_status import HTTP_200_OK
 
 confirm_table = mongodb.mongo.get_collection('confirmation')
 

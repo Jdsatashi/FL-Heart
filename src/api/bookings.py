@@ -1,11 +1,13 @@
 from datetime import datetime, timedelta, time
 
 import bcrypt
+import pymongo
 from bson import ObjectId
 from flask import request, Blueprint, session, jsonify, flash, redirect, url_for
 
 from src.mongodb import BOOKING_TABLE, ACCOUNT_TABLE
-from ..constant.http_status import *
+from ..constant.http_status import HTTP_401_UNAUTHORIZED, HTTP_400_BAD_REQUEST, HTTP_409_CONFLICT, \
+    HTTP_500_INTERNAL_SERVER_ERROR, HTTP_201_CREATED, HTTP_200_OK, HTTP_404_NOT_FOUND
 from ..requests.authenticate import authorize_user
 
 api_booking = Blueprint('bookings', __name__)
@@ -13,31 +15,23 @@ api_booking = Blueprint('bookings', __name__)
 
 @api_booking.route('/', methods=['GET'])
 def index_bookings():
-    if 'username' in session:
-        authorize = ACCOUNT_TABLE.find_one({
-            'username': session['username'],
-        })
-        authorize['_id'] = str(authorize['_id'])
-        return jsonify({
-            "message": "Test this one",
-        }), HTTP_200_OK
-    elif request.authorization["username"] is not None and request.authorization["password"] is not None:
-        username = request.authorization["username"]
-        password = request.authorization["password"]
-        password_hash = password.encode('utf8')
-        authorize = ACCOUNT_TABLE.find_one({
-            'username': username,
-        })
-        authorize['_id'] = str(authorize['_id'])
-        if bcrypt.checkpw(password_hash, authorize["password"]):
+    user_data = authorize_user()
+    if not user_data:
+        return jsonify({'message': 'Unauthorized'}), HTTP_401_UNAUTHORIZED
+    if request.method == 'GET':
+        booking_data = BOOKING_TABLE.find().sort([("date", pymongo.ASCENDING), ("time", pymongo.ASCENDING)])
+        data = []
+        for booking in booking_data:
+            booking['_id'] = str(booking['_id'])
+            data.append(booking)
+        if not data:
             return jsonify({
-                "message": "Test this one",
-                "account_data": username,
-                "password": password,
+                'message': 'Get booking data successfully!',
+                "Booking list": data
             }), HTTP_200_OK
-    else:
-        return jsonify({"message": "Wrong password"}), HTTP_401_UNAUTHORIZED
-
+        return jsonify({
+            'message': '404 not found'
+        }), HTTP_404_NOT_FOUND
 
 @api_booking.route('/create', methods=['POST', 'GET'])
 def create_booking():

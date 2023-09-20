@@ -13,7 +13,10 @@ from ..constant.http_status import HTTP_401_UNAUTHORIZED
 auth = Blueprint('auth', __name__)
 
 role = role_table.find_one({'role': 'auth_user'})
-role_auth_id = role['_id'] if role else role_table.find_one({'role': 'auth_user'})
+role_auth_id = str(role['_id']) if role else role_table.find_one({'role': 'auth_user'})
+
+role_admin = role_table.find_one({'role': 'admin'})
+role_admin_id = str(role_admin['_id']) if role_admin else role_table.find_one({'role': 'admin'})
 
 
 @auth.route('/register', methods=['GET', 'POST'])
@@ -92,7 +95,6 @@ def logout():
 
 def authorize_user():
     if 'username' in session:
-        print('This session ok!')
         account_data = ACCOUNT_TABLE.find_one({'username': session['username']})
         account_data['_id'] = str(account_data['_id'])
         data = account_data
@@ -102,7 +104,6 @@ def authorize_user():
     elif (request.authorization is not None
             and "username" in request.authorization
             and "password" in request.authorization):
-        print('This request.authorization ok!')
         username = request.authorization["username"]
         password = request.authorization["password"]
         password_hash = password.encode('utf8')
@@ -118,5 +119,23 @@ def authorize_user():
             return False
         return data
     else:
-        print('Else case: Unauthorized!')
         return False
+
+
+def admin_authorize():
+    print('Test function authorize admin')
+    user_data = authorize_user()
+    if not user_data:
+        print('test "user_data"')
+        return False
+    user_data['_id'] = str(user_data['_id'])
+    user = user_data
+    if 'password' in user:
+        print('test user "password"')
+        user.pop('password')
+    is_role_admin = user['role_id']
+    print('test role here: ')
+    if not is_role_admin == role_admin_id:
+        print(f"Test role false: \nUser role: {is_role_admin}\nAdmin role: {role_admin_id}")
+        return False
+    return user_data

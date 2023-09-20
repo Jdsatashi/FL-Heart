@@ -26,6 +26,7 @@ staticfiles/
 *.~*
 
 # Dependency directories
+lenv/
 venv/
 env/
 env1/

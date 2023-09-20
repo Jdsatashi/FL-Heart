@@ -34,6 +34,8 @@ def booking_index_admin():
         return redirect(url_for('home'))
 
     datebook = request.args.get('datebook')
+    type_search = request.args.get('type_search')
+    query_search = request.args.get('query_search')
     current_page = request.args.get('current')
     print('Current page = ')
     print(current_page)
@@ -54,17 +56,12 @@ def booking_index_admin():
     date_unique = sorted(date_unique)
     date_active = sorted(date_active)
 
+    # Pagination follow by date
     filter_date = date_active[0] if date_active else date_unique[-1]
     filter_date = date_unique[int(current_page)] if current_page else filter_date
     data_booking2 = BOOKING_TABLE.find({'date': filter_date}) if filter_date else BOOKING_TABLE.find()
-    # current_index = date_unique.index(date_active[0]) if not current_page else current_page
     current_index = current_page if current_page is not None else date_unique.index(date_active[0])
-    print("current_index here")
-    print(current_index)
-    print("Type of")
-    print(type(current_index))
     current_index = int(current_index)
-    print(type(current_index))
     next_page = current_index + 1 if (current_index + 1) < len(date_unique) else None
     prev_page = current_index - 1 if (current_index - 1) >= 0 else None
     page_paginate = {
@@ -79,6 +76,8 @@ def booking_index_admin():
                 data_booking2 = BOOKING_TABLE.find({'date': datebook})
             except TypeError:
                 data_booking2 = BOOKING_TABLE.find({'date': str(datebook)})
+        if type_search and query_search is not None:
+            data_booking2 = BOOKING_TABLE.find({type_search: {"$regex": query_search, "$options": "i"}})
         for booking in data_booking2:
             booking['_id'] = str(booking['_id'])
             data.append(booking)

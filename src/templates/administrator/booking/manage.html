@@ -11,19 +11,34 @@
                         <form onsubmit="" action="{{ url_for('admin.booking_index_admin') }}" method="GET">
                             <div class="input-group mb-3">
                                 <label for="datebook"></label>
-                                <select id="datebook" name="bookingDate" class="form-control">
+                                <select id="datebook" name="datebook" class="form-select">
+                                    <option value="" selected>Choose Booking Date</option>
                                     {% for _date_ in date_unique %}
                                         <option value="{{ _date_ }}">{{ _date_ }}</option>
                                     {% endfor %}
                                 </select>
-                                <input type="text" id="datebook" name="datebook" placeholder="Input date" class="form-control">
-
-                                {#                                <input type="text" class="form-control" name="title" aria-label="Search"#}
-                                {#                                       placeholder="Product's title" style="min-width: 20em;">#}
+                                <label for="type_search"></label>
+                                <select style="max-width: 7rem" id="type_search" name="type_search" class="form-select">
+                                    <option value="doctor">Doctor</option>
+                                    <option value="user_booking">User</option>
+                                    <option value="note">Notes</option>
+                                </select>
+                                <label for="query_search"></label>
+                                <input type="text" id="query_search"
+                                       name="query_search" placeholder="Search"
+                                       class="form-control">
                                 <button type="submit" class="btn btn-outline-dark">Search</button>
                             </div>
                         </form>
                     </div>
+                </div>
+            </div>
+            <div class="row d-flex mb-2">
+                <div class="justify-content-center input-group">
+                    <a class="btn btn-outline-dark" style="width: 64px" onclick="showLoadingSpinner();"
+                       href="{{ url_for('admin.booking_index_admin', current=paginating.prev_page) }}">Prev</a>
+                    <a class="btn btn-outline-dark" style="width: 64px" onclick="showLoadingSpinner();"
+                       href="{{ url_for('admin.booking_index_admin', current=paginating.next_page) }}">Next</a>
                 </div>
             </div>
             <table class="table-design mb-2">
@@ -133,14 +148,6 @@
                 {% endfor %}
                 </tbody>
             </table>
-            <div class="d-flex">
-                <div class="justify-content-center input-group">
-                    <a class="btn btn-outline-dark" style="width: 64px" onclick="showLoadingSpinner();"
-                       href="{{ url_for('admin.booking_index_admin', current=paginating.prev_page) }}">Prev</a>
-                    <a class="btn btn-outline-dark" style="width: 64px" onclick="showLoadingSpinner();"
-                       href="{{ url_for('admin.booking_index_admin', current=paginating.next_page) }}">Next</a>
-                </div>
-            </div>
         </div>
     </div>
 {% endblock %}

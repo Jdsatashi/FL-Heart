@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  admin-heart:
+    image: admin-heart-base
+    container_name: admin-heart
+    build:
+      context: .
+      dockerfile: Dockerfile
+    expose:
+      - 5000
+    ports:
+      - 7000:5000

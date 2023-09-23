@@ -36,3 +36,5 @@ instance/
 .vercel
 test.py
 test2.py
+.venv
+.python-version

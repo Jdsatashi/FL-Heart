@@ -7,16 +7,9 @@ from flask import render_template, redirect, request, flash, url_for, Blueprint,
 
 from src.forms import RegisterForm, LoginForm
 from src.mongodb import ACCOUNT_TABLE
-from .role import role_table
-from ..constant.http_status import HTTP_401_UNAUTHORIZED
+from src.requests.role import role_auth_id, role_admin_id
 
 auth = Blueprint('auth', __name__)
-
-role = role_table.find_one({'role': 'auth_user'})
-role_auth_id = str(role['_id']) if role else role_table.find_one({'role': 'auth_user'})
-
-role_admin = role_table.find_one({'role': 'admin'})
-role_admin_id = str(role_admin['_id']) if role_admin else role_table.find_one({'role': 'admin'})
 
 
 @auth.route('/register', methods=['GET', 'POST'])
@@ -78,6 +71,9 @@ def login():
                         }
                     })
                 session["username"] = username
+                if is_role == role_admin_id:
+                    flash(f"Successfully registered! Welcome '{username}'.", "success")
+                    return redirect(url_for('admin.booking_index_admin'))
                 flash(f"Successfully registered! Welcome '{username}'.", "success")
                 return redirect(url_for('home'))
             else:
@@ -100,6 +96,8 @@ def authorize_user():
         data = account_data
         if 'password' in data:
             data.pop('password')
+        data['role_id'] = str(data['role_id'])
+        session['role_id'] = data['role_id']
         return data
     elif (request.authorization is not None
             and "username" in request.authorization
@@ -111,6 +109,7 @@ def authorize_user():
             'username': username,
         })
         authorize['_id'] = str(authorize['_id'])
+        authorize['role_id'] = str(authorize['role_id'])
         if bcrypt.checkpw(password_hash, authorize["password"]):
             data = authorize
             if 'password' in data:
@@ -127,6 +126,7 @@ def admin_authorize():
     if not user_data:
         return False
     user_data['_id'] = str(user_data['_id'])
+    user_data['role_id'] = str(user_data['role_id'])
     user = user_data
     if 'password' in user:
         user.pop('password')

@@ -1,4 +1,8 @@
 {% extends 'layouts/layout.html' %}
 {% block content %}
-    <h1>This is the home page and layout.</h1>
+    <div class="container-md d-flex justify-content-center align-items-center vh-100">
+        <div class="text-center" style="margin-bottom: 120px;">
+            <h2>This is ADMINISTRATOR page, you need to <a href="{{ url_for('auth.login') }}">login</a>.</h2>
+        </div>
+    </div>
 {% endblock %}

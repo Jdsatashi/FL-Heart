@@ -11,6 +11,7 @@ from src.requests.authenticate import admin_authorize
 
 admin_routes = Blueprint('admin', __name__)
 admin = admin_routes
+from ..role import role_admin_id
 
 
 @admin.route('/')
@@ -19,7 +20,7 @@ def index_admin():
     if not authorize:
         flash(f"Unauthorized.", "danger")
         return redirect(url_for('home'))
-    return render_template('administrator/admin.html', title='Admin Dashboard')
+    return render_template('administrator/admin.html', title='Admin Dashboard', admin_id=role_admin_id)
 
 
 @admin.route('/bookings/', methods=['GET'])
@@ -53,7 +54,8 @@ def booking_index_admin():
     # Pagination follow by date
     filter_date = date_active[0] if date_active else date_unique[-1]
     filter_date = date_unique[int(current_page)] if current_page else filter_date
-    data_booking2 = BOOKING_TABLE.find({'date': filter_date}).sort([("date", pymongo.ASCENDING), ("time", pymongo.ASCENDING)])\
+    data_booking2 = BOOKING_TABLE.find({'date': filter_date}).sort(
+        [("date", pymongo.ASCENDING), ("time", pymongo.ASCENDING)]) \
         if filter_date else BOOKING_TABLE.find().sort([("date", pymongo.ASCENDING), ("time", pymongo.ASCENDING)])
     current_index = current_page if current_page is not None else date_unique.index(date_active[0])
     current_index = int(current_index)
@@ -74,7 +76,8 @@ def booking_index_admin():
                 ]
             }).sort([("date", pymongo.ASCENDING), ("time", pymongo.ASCENDING)])
         elif datebook:
-            data_booking2 = BOOKING_TABLE.find({'date': datebook}).sort([("date", pymongo.ASCENDING), ("time", pymongo.ASCENDING)])
+            data_booking2 = BOOKING_TABLE.find({'date': datebook}).sort(
+                [("date", pymongo.ASCENDING), ("time", pymongo.ASCENDING)])
         elif type_search and query_search:
             data_booking2 = BOOKING_TABLE.find({
                 type_search: {"$regex": query_search, "$options": "i"}
@@ -90,7 +93,9 @@ def booking_index_admin():
             bookings=data,
             date_unique=date_unique,
             paginating=page_paginate,
-            form=form)
+            form=form,
+            admin_id=role_admin_id
+        )
 
 
 @admin.route('/booking/<string:_id>', methods=['POST'])
